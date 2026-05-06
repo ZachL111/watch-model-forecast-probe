@@ -1,0 +1,17 @@
+{
+  "repo": "watch-model-forecast-probe",
+  "thresholds": {
+    "signal": 2,
+    "slack": 2,
+    "confidence": 2,
+    "drag": 3,
+    "ship": 196,
+    "watch": 118
+  },
+  "terms": [
+    "feature drift",
+    "window width",
+    "metric stability",
+    "explainability"
+  ]
+}
