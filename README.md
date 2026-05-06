@@ -1,68 +1,40 @@
 # watch-model-forecast-probe
 
-`watch-model-forecast-probe` is a focused Haskell codebase around create a Haskell reference implementation for forecast workflows, centered on security rule linting, safe and unsafe fixtures, and remediation hints. It is meant to be easy to inspect, run, and extend without a hosted service.
+`watch-model-forecast-probe` keeps a focused Haskell implementation around ml utilities. The project goal is to create a Haskell reference implementation for forecast workflows, centered on security rule linting, safe and unsafe fixtures, and remediation hints.
 
-## Watch Model Forecast Probe Walkthrough
+## Problem It Tries To Make Smaller
 
-I would read the project from the outside in: command, fixture, model, then roadmap. That keeps the ml utilities idea grounded in files that can be checked locally.
+The point is to make a small domain rule concrete enough that a reader can change it and immediately see what broke.
 
-## Reason For The Project
+## Watch Model Forecast Probe Review Notes
 
-I use this kind of project to make a rule visible before adding more machinery around it. The important part here is not the size of the codebase. It is that the input signals, scoring rule, fixture data, and expected output can all be checked in one sitting.
+The first comparison I would make is `explainability` against `feature drift` because it shows where the rule is most opinionated.
 
-## Capabilities
+## Working Pieces
 
-- Models feature signals with deterministic scoring and explicit review decisions.
-- Uses fixture data to keep metric checks changes visible in code review.
-- Includes extended examples for windowed behavior, including `recovery` and `degraded`.
-- Documents explainable outputs tradeoffs in `docs/operations.md`.
-- Runs locally with a single verification command and no external credentials.
+- `fixtures/domain_review.csv` adds cases for feature drift and window width.
+- `metadata/domain-review.json` records the same cases in structured form.
+- `config/review-profile.json` captures the read order and the two review questions.
+- `examples/watch-model-forecast-walkthrough.md` walks through the case spread.
+- The Haskell code includes a review path for `explainability` and `feature drift`.
+- `docs/field-notes.md` explains the strongest and weakest cases.
 
-## How It Is Put Together
+## Design Notes
 
-The core is a scoring model over demand, capacity, latency, risk, and weight. That keeps feature signals, metric checks, and windowed behavior in one explicit decision path. The threshold is 172, with risk penalty 7, latency penalty 4, and weight bonus 6. The Haskell code keeps the pure scoring function isolated so tests can check it without setup.
+The implementation keeps the scoring rule plain: reward signal and confidence, preserve slack, penalize drag, then classify the result into a review lane.
 
-## Where Things Live
+The Haskell addition stays small enough to inspect in one sitting.
 
-- `src`: primary implementation
-- `tests`: verification harness
-- `fixtures`: compact golden scenarios
-- `examples`: expanded scenario set
-- `metadata`: project constants and verification metadata
-- `docs`: operations and extension notes
-- `scripts`: local verification and audit commands
-
-## Getting It Running
-
-Clone the repository, enter the directory, and run the verifier. No database server, cloud account, or token is required.
-
-## Command Examples
+## Example Run
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts/verify.ps1
 ```
 
-This runs the language-level build or test path against the compact fixture set.
+## Tests
 
-## Check The Work
+The verifier is intentionally local. It should fail if the fixture score math, lane assignment, or language-specific test drifts.
 
-```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File scripts/audit.ps1
-```
+## Known Limits
 
-The audit command checks repository structure and README constraints before it delegates to the verifier.
-
-## Data Notes
-
-`baseline` is the first example I would inspect because it lands on the `review` path with a score of 99. The broader file also keeps `degraded` at -79 and `recovery` at 175, which gives the model a useful low-to-high spread.
-
-## Tradeoffs
-
-This code is local-first. It makes no claim about deployed usage and avoids credentials, hosted state, and environment-specific setup.
-
-## Possible Extensions
-
-- Add a loader for `examples/extended_cases.csv` and promote selected cases into the language test suite.
-- Add a short report command that prints the score breakdown for a single scenario.
-- Add malformed input fixtures so the failure path is as visible as the happy path.
-- Add one more ml utilities fixture that focuses on a malformed or borderline input.
+No external service is required. A deeper version would add more negative cases and a clearer boundary around invalid input.

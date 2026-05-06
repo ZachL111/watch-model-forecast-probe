@@ -1,0 +1,73 @@
+{
+  "repo": "watch-model-forecast-probe",
+  "language": "Haskell",
+  "category": "ML utilities",
+  "goal": "Create a Haskell reference implementation for forecast workflows, centered on security rule linting, safe and unsafe fixtures, and remediation hints.",
+  "review_model": {
+    "terms": [
+      "feature drift",
+      "window width",
+      "metric stability",
+      "explainability"
+    ],
+    "lanes": [
+      "ship",
+      "watch",
+      "hold"
+    ],
+    "score": "signal * 2 + slack + confidence - drag * 3",
+    "purpose": "surface the domain-specific cases that need the most careful review"
+  },
+  "cases": [
+    {
+      "name": "baseline",
+      "focus": "feature drift",
+      "signal": 77,
+      "slack": 42,
+      "drag": 24,
+      "confidence": 78,
+      "score": 202,
+      "lane": "ship"
+    },
+    {
+      "name": "stress",
+      "focus": "window width",
+      "signal": 52,
+      "slack": 36,
+      "drag": 24,
+      "confidence": 90,
+      "score": 158,
+      "lane": "ship"
+    },
+    {
+      "name": "edge",
+      "focus": "metric stability",
+      "signal": 72,
+      "slack": 40,
+      "drag": 19,
+      "confidence": 56,
+      "score": 183,
+      "lane": "ship"
+    },
+    {
+      "name": "recovery",
+      "focus": "explainability",
+      "signal": 67,
+      "slack": 49,
+      "drag": 17,
+      "confidence": 72,
+      "score": 204,
+      "lane": "ship"
+    },
+    {
+      "name": "stale",
+      "focus": "feature drift",
+      "signal": 59,
+      "slack": 41,
+      "drag": 26,
+      "confidence": 64,
+      "score": 145,
+      "lane": "ship"
+    }
+  ]
+}
